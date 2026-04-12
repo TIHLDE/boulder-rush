@@ -29,7 +29,7 @@ export default function LeaderboardScreen({ onBack, highlightName }: Props) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/leaderboard?mode=${filter}&limit=10`)
+    fetch(`/api/leaderboard?mode=${filter}`)
       .then((r) => r.json())
       .then((data) => {
         setScores(data.scores || []);
@@ -59,7 +59,7 @@ export default function LeaderboardScreen({ onBack, highlightName }: Props) {
         ))}
       </div>
 
-      <div className="w-full max-w-2xl arcade-panel overflow-hidden">
+      <div className="w-full max-w-2xl arcade-panel max-h-[min(70vh,600px)] overflow-x-hidden overflow-y-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="text-foreground/50 border-b border-neon/25 font-display text-[0.4rem]">
