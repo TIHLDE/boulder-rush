@@ -1,4 +1,4 @@
-import { Player } from "../types";
+import { GameMode, Player } from "../types";
 
 interface KeyBindings {
   up: string;
@@ -23,10 +23,12 @@ const PLAYER2_KEYS: KeyBindings = {
 
 export class InputManager {
   private keys: Set<string> = new Set();
+  private mode: GameMode;
   private handleKeyDown: (e: KeyboardEvent) => void;
   private handleKeyUp: (e: KeyboardEvent) => void;
 
-  constructor() {
+  constructor(mode: GameMode) {
+    this.mode = mode;
     this.handleKeyDown = (e: KeyboardEvent) => {
       this.keys.add(e.key.length === 1 ? e.key.toLowerCase() : e.key);
       if (
@@ -48,7 +50,10 @@ export class InputManager {
 
   update(players: Player[]): void {
     for (const player of players) {
-      const bindings = player.id === 0 ? PLAYER1_KEYS : PLAYER2_KEYS;
+      const bindings =
+        this.mode === "versus" && player.id === 0
+          ? PLAYER1_KEYS
+          : PLAYER2_KEYS;
       player.inputUp = this.keys.has(bindings.up);
       player.inputDown = this.keys.has(bindings.down);
       player.inputLeft = this.keys.has(bindings.left);

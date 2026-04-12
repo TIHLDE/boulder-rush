@@ -84,10 +84,12 @@ export default function NameEntry({ mode, players, onStart, onBack }: Props) {
         </button>
       </div>
 
-      {mode === "versus" && (
+      {mode === "versus" ? (
         <p className="text-foreground/45 text-base text-center">
           P1: WASD &nbsp;|&nbsp; P2: Arrow Keys
         </p>
+      ) : (
+        <p className="text-foreground/45 text-base text-center">Arrow keys to move</p>
       )}
     </div>
   );

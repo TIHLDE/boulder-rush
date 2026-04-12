@@ -48,7 +48,7 @@ export class GameEngine {
 
   onStateChange?: (state: EngineState) => void;
   onFinish?: (results: GameResult[]) => void;
-  onHudUpdate?: (elapsed: number, databrus: number[]) => void;
+  onHudUpdate?: (elapsed: number, databrusMasks: number[]) => void;
   onCountdownTick?: (value: number) => void;
 
   constructor(canvas: HTMLCanvasElement, config: GameConfig) {
@@ -66,7 +66,7 @@ export class GameEngine {
     this.ctx = canvas.getContext("2d")!;
     this.ctx.scale(dpr, dpr);
 
-    this.inputManager = new InputManager();
+    this.inputManager = new InputManager(config.mode);
     this.physicsSystem = new PhysicsSystem();
     this.collisionSystem = new CollisionSystem();
     this.particleSystem = new ParticleSystem();
@@ -85,6 +85,7 @@ export class GameEngine {
         character: config.players[i].character,
         name: config.players[i].name,
         databrusCollected: 0,
+        databrusMask: 0,
         finishTime: null,
         inputUp: false,
         inputDown: false,
@@ -231,7 +232,7 @@ export class GameEngine {
     if (Math.floor(this.elapsedMs / 100) !== Math.floor((this.elapsedMs - dt * 1000) / 100)) {
       this.onHudUpdate?.(
         this.elapsedMs,
-        this.players.map((p) => p.databrusCollected)
+        this.players.map((p) => p.databrusMask)
       );
     }
   }
