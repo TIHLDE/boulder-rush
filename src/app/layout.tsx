@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Press_Start_2P, VT323 } from "next/font/google";
+import SiteHeader from "@/components/branding/SiteHeader";
 import "./globals.css";
 
 const pressStart = Press_Start_2P({
@@ -31,6 +32,7 @@ export default function RootLayout({
       className={`${pressStart.variable} ${vt323.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground relative z-0">
+        <SiteHeader />
         {children}
       </body>
     </html>

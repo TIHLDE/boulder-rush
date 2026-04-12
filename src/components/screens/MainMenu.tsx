@@ -1,5 +1,7 @@
 "use client";
 
+import OrganizerContestRow from "@/components/branding/OrganizerContestRow";
+
 interface Props {
   onPlay: () => void;
   onLeaderboard: () => void;
@@ -26,15 +28,13 @@ function PixelBoulder() {
 export default function MainMenu({ onPlay, onLeaderboard }: Props) {
   return (
     <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4">
-      <div className="text-center space-y-3">
-        <h1 className="arcade-title text-2xl sm:text-3xl md:text-4xl leading-tight">
-          <span className="text-red-game">BOULDER</span>
+      <div className="text-center space-y-4">
+        <h1 className="arcade-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight px-1">
+          <span className="text-blue-game">BOULDER</span>
           <br />
-          <span className="text-blue-game">RUSH</span>
+          <span className="text-red-game">RUSH</span>
         </h1>
-        <p className="text-foreground/55 max-w-md mx-auto text-lg">
-          Push. Dodge. Collect. Win.
-        </p>
+        <OrganizerContestRow />
       </div>
 
       <PixelBoulder />
@@ -47,8 +47,6 @@ export default function MainMenu({ onPlay, onLeaderboard }: Props) {
           Leaderboard
         </button>
       </div>
-
-      <p className="text-foreground/35 text-base">Til ENT3R Inspirasjonskveld</p>
     </div>
   );
 }

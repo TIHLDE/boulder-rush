@@ -1,7 +1,7 @@
 export function calculateScore(timeMs: number, databrusCount: number): number {
   const timeScore = Math.floor(127_500_000 / timeMs);
   const databrusBonus = databrusCount * 500;
-  return Math.min(timeScore + databrusBonus, 9999);
+  return timeScore + databrusBonus;
 }
 
 export function calculateTimeScore(timeMs: number): number {
