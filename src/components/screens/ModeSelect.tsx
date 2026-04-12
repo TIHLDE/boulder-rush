@@ -1,5 +1,6 @@
 "use client";
 import { GameMode } from "@/game/types";
+import { IconSoloMode, IconVersusMode } from "@/components/arcade/ArcadeIcons";
 
 interface Props {
   onSelect: (mode: GameMode) => void;
@@ -8,31 +9,37 @@ interface Props {
 
 export default function ModeSelect({ onSelect, onBack }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      <h2 className="text-4xl font-bold text-white">Select Mode</h2>
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4">
+      <h2 className="arcade-title text-xl sm:text-2xl text-neon text-center">SELECT MODE</h2>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col sm:flex-row gap-6">
         <button
+          type="button"
           onClick={() => onSelect("single")}
-          className="flex flex-col items-center gap-4 p-8 bg-white/5 border-2 border-white/10 rounded-2xl hover:border-red-game/50 hover:bg-white/10 transition-all w-64"
+          className="arcade-panel flex flex-col items-center gap-4 p-8 w-64 hover:border-neon-dim transition-colors cursor-pointer text-left"
         >
-          <div className="text-5xl">🎮</div>
-          <span className="text-xl font-bold text-white">Single Player</span>
-          <span className="text-white/50 text-sm">Chase your best score</span>
+          <IconSoloMode size={56} />
+          <span className="font-display text-[0.6rem] text-foreground">SINGLE</span>
+          <span className="text-foreground/55 text-center text-base leading-snug">
+            Chase your best score
+          </span>
         </button>
 
         <button
+          type="button"
           onClick={() => onSelect("versus")}
-          className="flex flex-col items-center gap-4 p-8 bg-white/5 border-2 border-white/10 rounded-2xl hover:border-blue-game/50 hover:bg-white/10 transition-all w-64"
+          className="arcade-panel flex flex-col items-center gap-4 p-8 w-64 hover:border-blue-game transition-colors cursor-pointer text-left"
         >
-          <div className="text-5xl">🆚</div>
-          <span className="text-xl font-bold text-white">1v1 Local</span>
-          <span className="text-white/50 text-sm">Best of 3 rounds</span>
+          <IconVersusMode size={56} />
+          <span className="font-display text-[0.6rem] text-blue-game-light">1v1 LOCAL</span>
+          <span className="text-foreground/55 text-center text-base leading-snug">
+            Best of 3 rounds
+          </span>
         </button>
       </div>
 
-      <button onClick={onBack} className="text-white/50 hover:text-white transition-colors">
-        ← Back
+      <button type="button" onClick={onBack} className="arcade-btn-ghost text-lg">
+        Back
       </button>
     </div>
   );

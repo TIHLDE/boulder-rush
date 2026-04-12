@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GameConfig, GameResult, CANVAS_WIDTH, CANVAS_HEIGHT, VERSUS_CANVAS_WIDTH } from "@/game/types";
 import { GameEngine } from "@/game/engine/GameEngine";
+import { DatabrusIcon } from "@/components/arcade/ArcadeIcons";
 
 interface Props {
   config: GameConfig;
@@ -52,32 +53,43 @@ export default function GameCanvas({ config, onFinish }: Props) {
   const width = isVersus ? VERSUS_CANVAS_WIDTH : CANVAS_WIDTH;
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* HUD */}
+    <div className="relative z-[1] flex flex-col items-center gap-4 px-2">
       <div
-        className="flex justify-between items-center px-4 py-2 bg-black/50 rounded-lg backdrop-blur-sm"
+        className="flex justify-between items-stretch gap-2 px-3 py-2 arcade-panel-muted border-neon/40"
         style={{ width }}
       >
         {config.players.map((p, i) => (
-          <div key={i} className="flex items-center gap-4">
-            <span className="font-bold text-sm" style={{ color: p.character === "abakule" ? "#e63946" : "#1d8cf8" }}>
+          <div key={i} className="flex flex-1 flex-wrap items-center gap-3 min-w-0">
+            <span
+              className="font-display text-[0.45rem] truncate shrink-0"
+              style={{ color: p.character === "abakule" ? "#e63946" : "#1d8cf8" }}
+            >
               {p.name}
             </span>
-            <span className="text-white/70 text-sm font-mono">
+            <span className="text-foreground/70 font-mono text-sm shrink-0">
               {(elapsed / 1000).toFixed(1)}s
             </span>
-            <span className="text-green-400 text-sm">
-              {"🥤".repeat(databrus[i] || 0)}
+            <span className="flex flex-wrap items-center gap-0.5">
+              {Array.from({ length: databrus[i] || 0 }, (_, j) => (
+                <DatabrusIcon key={j} size={16} />
+              ))}
             </span>
           </div>
         ))}
       </div>
 
-      <canvas
-        ref={canvasRef}
-        className="rounded-lg shadow-2xl"
-        style={{ width, height: CANVAS_HEIGHT }}
-      />
+      <div className="arcade-cabinet-bezel">
+        <div className="arcade-screen-inner" style={{ width }}>
+          <canvas
+            ref={canvasRef}
+            className="block w-full bg-black"
+            style={{ width, height: CANVAS_HEIGHT, imageRendering: "pixelated" }}
+          />
+        </div>
+        <p className="font-display text-[0.35rem] text-center text-foreground/35 mt-2 tracking-[0.3em]">
+          CRT-01
+        </p>
+      </div>
 
       {countdown !== null && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

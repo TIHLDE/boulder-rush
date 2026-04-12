@@ -2,10 +2,11 @@ import { Player, Obstacle, Databrus, Particle, LANE_WIDTH, FINISH_Y } from "../t
 import { Camera } from "../engine/Camera";
 import { CHARACTERS } from "../data/characters";
 
-const BG_COLOR = "#0a0a1a";
-const GRID_COLOR = "rgba(255,255,255,0.03)";
-const OBSTACLE_COLOR = "#2a2a4a";
-const OBSTACLE_BORDER = "#4a4a6a";
+/** Mirror arcade tokens in src/app/globals.css @theme (background, neon accents). */
+const BG_COLOR = "#06060f";
+const GRID_COLOR = "rgba(0,245,212,0.055)";
+const OBSTACLE_COLOR = "#1a1a32";
+const OBSTACLE_BORDER = "rgba(0,245,212,0.28)";
 const FINISH_COLOR_1 = "#ffffff";
 const FINISH_COLOR_2 = "#222222";
 
@@ -72,7 +73,7 @@ export class Renderer {
 
       // Draw lane border
       if (players.length > 1) {
-        ctx.strokeStyle = "rgba(255,255,255,0.15)";
+        ctx.strokeStyle = "rgba(0,245,212,0.2)";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(offsetX + laneW, 0);

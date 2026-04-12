@@ -5,38 +5,50 @@ interface Props {
   onLeaderboard: () => void;
 }
 
+function PixelBoulder() {
+  return (
+    <svg
+      width={80}
+      height={80}
+      viewBox="0 0 20 20"
+      shapeRendering="crispEdges"
+      className="animate-bounce drop-shadow-[0_4px_0_#000]"
+      aria-hidden
+    >
+      <circle cx="10" cy="10" r="9" fill="#2a2a32" />
+      <circle cx="10" cy="10" r="7" fill="#5a5a68" />
+      <rect x="6" y="5" width="3" height="2" fill="#888" opacity="0.6" />
+      <rect x="11" y="8" width="2" height="2" fill="#aaa" opacity="0.4" />
+    </svg>
+  );
+}
+
 export default function MainMenu({ onPlay, onLeaderboard }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      {/* Title */}
-      <div className="text-center">
-        <h1 className="text-7xl font-black tracking-tight">
-          <span className="text-red-game">BOULDER</span>{" "}
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4">
+      <div className="text-center space-y-3">
+        <h1 className="arcade-title text-2xl sm:text-3xl md:text-4xl leading-tight">
+          <span className="text-red-game">BOULDER</span>
+          <br />
           <span className="text-blue-game">RUSH</span>
         </h1>
-        <p className="text-white/50 mt-2 text-lg">Push. Dodge. Collect. Win.</p>
+        <p className="text-foreground/55 max-w-md mx-auto text-lg">
+          Push. Dodge. Collect. Win.
+        </p>
       </div>
 
-      {/* Boulder animation */}
-      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-400 to-gray-700 shadow-2xl animate-bounce" />
+      <PixelBoulder />
 
-      {/* Buttons */}
-      <div className="flex flex-col gap-4 w-64">
-        <button
-          onClick={onPlay}
-          className="px-8 py-4 bg-gradient-to-r from-red-game to-blue-game text-white font-bold text-xl rounded-xl hover:scale-105 transition-transform shadow-lg"
-        >
-          PLAY
+      <div className="flex flex-col gap-4 w-full max-w-[280px]">
+        <button type="button" onClick={onPlay} className="arcade-btn-primary w-full uppercase">
+          Play
         </button>
-        <button
-          onClick={onLeaderboard}
-          className="px-8 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
-        >
+        <button type="button" onClick={onLeaderboard} className="arcade-btn-secondary w-full uppercase">
           Leaderboard
         </button>
       </div>
 
-      <p className="text-white/30 text-sm">Til ENT3R Inspirasjonskveld</p>
+      <p className="text-foreground/35 text-base">Til ENT3R Inspirasjonskveld</p>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { GameMode, PlayerSetup } from "@/game/types";
 import { CHARACTERS } from "@/game/data/characters";
+import { CharacterFace } from "@/components/arcade/CharacterFace";
 
 interface Props {
   mode: GameMode;
@@ -31,26 +32,23 @@ export default function NameEntry({ mode, players, onStart, onBack }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      <h2 className="text-4xl font-bold text-white">
-        {mode === "versus" ? "Enter Names" : "Enter Your Name"}
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4">
+      <h2 className="arcade-title text-lg sm:text-xl text-neon text-center">
+        {mode === "versus" ? "ENTER NAMES" : "ENTER NAME"}
       </h2>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col sm:flex-row gap-10">
         {players.map((p, i) => {
           const char = CHARACTERS[p.character];
           return (
-            <div key={i} className="flex flex-col items-center gap-4">
+            <div key={i} className="flex flex-col items-center gap-4 arcade-panel-muted p-6 w-56">
               {mode === "versus" && (
-                <span className="text-white/50 text-sm">Player {i + 1}</span>
+                <span className="font-display text-[0.45rem] text-foreground/50">P{i + 1}</span>
               )}
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-                style={{ backgroundColor: `${char.color}30`, border: `2px solid ${char.color}` }}
-              >
-                {p.character === "abakule" ? "🤓" : "💼"}
+              <div className="p-1 border-2 rounded-sm" style={{ borderColor: char.color }}>
+                <CharacterFace id={p.character} size={56} />
               </div>
-              <span className="font-bold" style={{ color: char.color }}>
+              <span className="font-display text-[0.45rem]" style={{ color: char.color }}>
                 {char.name}
               </span>
               <input
@@ -63,34 +61,31 @@ export default function NameEntry({ mode, players, onStart, onBack }: Props) {
                   setNames(newNames);
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Your name..."
+                placeholder="Name..."
                 autoFocus={i === 0}
-                className="px-4 py-3 bg-white/10 border-2 border-white/20 rounded-xl text-white text-center text-lg focus:border-white/50 focus:outline-none transition-colors w-48"
+                className="arcade-input w-full"
               />
             </div>
           );
         })}
       </div>
 
-      <div className="flex gap-4">
-        <button onClick={onBack} className="text-white/50 hover:text-white transition-colors">
-          ← Back
+      <div className="flex flex-wrap items-center justify-center gap-4">
+        <button type="button" onClick={onBack} className="arcade-btn-ghost text-lg">
+          Back
         </button>
         <button
+          type="button"
           onClick={handleStart}
           disabled={!canStart}
-          className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${
-            canStart
-              ? "bg-gradient-to-r from-red-game to-blue-game text-white hover:scale-105"
-              : "bg-white/10 text-white/30 cursor-not-allowed"
-          }`}
+          className="arcade-btn-primary uppercase"
         >
-          START
+          Start
         </button>
       </div>
 
       {mode === "versus" && (
-        <p className="text-white/40 text-sm">
+        <p className="text-foreground/45 text-base text-center">
           P1: WASD &nbsp;|&nbsp; P2: Arrow Keys
         </p>
       )}

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { GameConfig, RoundResult, GameResult } from "@/game/types";
 import { CHARACTERS } from "@/game/data/characters";
+import { TrophyIcon } from "@/components/arcade/ArcadeIcons";
 
 interface Props {
   config: GameConfig;
@@ -24,7 +25,6 @@ export default function MatchResult({
   const winnerIdx = wins[0] >= 2 ? 0 : 1;
   const winnerChar = CHARACTERS[config.players[winnerIdx].character];
 
-  // Get best score per player across all rounds
   const bestResults: GameResult[] = config.players.map((_, pIdx) => {
     let best: GameResult | null = null;
     for (const round of allRoundResults) {
@@ -55,35 +55,33 @@ export default function MatchResult({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      <h2 className="text-5xl font-black" style={{ color: winnerChar.color }}>
-        {config.players[winnerIdx].name} WINS!
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-8 px-4 py-8">
+      <h2 className="arcade-title text-base sm:text-xl text-center px-2" style={{ color: winnerChar.color }}>
+        {config.players[winnerIdx].name.toUpperCase()} WINS
       </h2>
 
-      <div className="text-6xl">🏆</div>
+      <TrophyIcon size={72} />
 
-      {/* Final series score */}
-      <div className="flex items-center gap-8 text-4xl font-black">
+      <div className="flex items-center gap-8 font-display text-lg sm:text-xl">
         <div className="text-center">
           <div style={{ color: CHARACTERS[config.players[0].character].color }}>
             {config.players[0].name}
           </div>
-          <div className="text-white">{wins[0]}</div>
+          <div className="text-foreground mt-1">{wins[0]}</div>
         </div>
-        <span className="text-white/30 text-2xl">vs</span>
+        <span className="text-foreground/35 text-sm">VS</span>
         <div className="text-center">
           <div style={{ color: CHARACTERS[config.players[1].character].color }}>
             {config.players[1].name}
           </div>
-          <div className="text-white">{wins[1]}</div>
+          <div className="text-foreground mt-1">{wins[1]}</div>
         </div>
       </div>
 
-      {/* Round-by-round summary */}
-      <div className="flex flex-col gap-2 bg-white/5 p-6 rounded-xl">
+      <div className="arcade-panel-muted w-full max-w-lg p-6">
         {allRoundResults.map((round) => (
-          <div key={round.round} className="flex items-center gap-4 text-sm">
-            <span className="text-white/50 w-20">Round {round.round}</span>
+          <div key={round.round} className="flex flex-wrap items-center gap-4 text-base border-b border-neon/15 last:border-0 py-2">
+            <span className="text-foreground/45 w-24 font-display text-[0.45rem]">R{round.round}</span>
             {round.results.map((r, i) => (
               <span
                 key={i}
@@ -97,29 +95,24 @@ export default function MatchResult({
         ))}
       </div>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex flex-wrap justify-center gap-3 mt-2">
         <button
+          type="button"
           onClick={handleSubmit}
           disabled={submitted}
-          className={`px-6 py-3 rounded-xl font-bold transition-all ${
+          className={
             submitted
-              ? "bg-green-500/20 text-green-400"
-              : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:scale-105"
-          }`}
+              ? "arcade-btn-secondary border-green-databrus text-green-databrus cursor-default"
+              : "arcade-btn-secondary border-green-databrus text-green-databrus"
+          }
         >
-          {submitted ? "✓ Submitted!" : "Submit Best Scores"}
+          {submitted ? "SAVED" : "SUBMIT BEST"}
         </button>
-        <button
-          onClick={onPlayAgain}
-          className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition-colors"
-        >
+        <button type="button" onClick={onPlayAgain} className="arcade-btn-secondary uppercase">
           Rematch
         </button>
-        <button
-          onClick={onMainMenu}
-          className="px-6 py-3 text-white/50 hover:text-white transition-colors"
-        >
-          Main Menu
+        <button type="button" onClick={onMainMenu} className="arcade-btn-ghost text-lg">
+          Main menu
         </button>
       </div>
     </div>

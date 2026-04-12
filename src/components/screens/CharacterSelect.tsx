@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { GameMode, CharacterId } from "@/game/types";
 import { CHARACTERS } from "@/game/data/characters";
+import { CharacterFace } from "@/components/arcade/CharacterFace";
 
 interface Props {
   mode: GameMode;
@@ -14,11 +15,7 @@ export default function CharacterSelect({ mode, onSelect, onBack }: Props) {
   const [p2Choice, setP2Choice] = useState<CharacterId | null>(null);
   const isVersus = mode === "versus";
 
-  const currentPicking = !isVersus
-    ? 1
-    : p1Choice === null
-      ? 1
-      : 2;
+  const currentPicking = !isVersus ? 1 : p1Choice === null ? 1 : 2;
 
   const handlePick = (id: CharacterId) => {
     if (!isVersus) {
@@ -35,13 +32,13 @@ export default function CharacterSelect({ mode, onSelect, onBack }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      <h2 className="text-4xl font-bold text-white">
-        {isVersus ? `Player ${currentPicking} — Choose Character` : "Choose Character"}
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4">
+      <h2 className="arcade-title text-lg sm:text-xl text-center text-neon px-2">
+        {isVersus ? `P${currentPicking} — PICK FIGHTER` : "PICK FIGHTER"}
       </h2>
 
-      <div className="flex gap-8">
-        {(Object.values(CHARACTERS) as typeof CHARACTERS[CharacterId][]).map((char) => {
+      <div className="flex flex-col sm:flex-row gap-8">
+        {(Object.values(CHARACTERS) as (typeof CHARACTERS)[CharacterId][]).map((char) => {
           const isDisabled = isVersus && p1Choice === char.id;
           const isSelected =
             (!isVersus && p1Choice === char.id) ||
@@ -50,33 +47,34 @@ export default function CharacterSelect({ mode, onSelect, onBack }: Props) {
           return (
             <button
               key={char.id}
+              type="button"
               onClick={() => !isDisabled && handlePick(char.id)}
               disabled={isDisabled}
-              className={`flex flex-col items-center gap-4 p-8 rounded-2xl border-3 transition-all w-64
-                ${isDisabled ? "opacity-40 cursor-not-allowed border-white/10" : "cursor-pointer hover:scale-105"}
-                ${isSelected ? `border-[${char.color}] bg-white/10` : "border-white/10 bg-white/5"}
+              className={`flex flex-col items-center gap-4 p-8 w-64 transition-all text-left rounded-sm
+                ${isDisabled ? "opacity-40 cursor-not-allowed arcade-panel-muted" : "cursor-pointer arcade-panel hover:translate-y-[-2px]"}
               `}
               style={{
                 borderColor: isSelected ? char.color : undefined,
-                boxShadow: isSelected ? `0 0 30px ${char.color}40` : undefined,
+                boxShadow: isSelected
+                  ? `inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 0 #030308, 0 0 28px ${char.color}44`
+                  : undefined,
               }}
             >
-              {/* Character avatar */}
               <div
-                className="w-24 h-24 rounded-full flex items-center justify-center text-5xl"
-                style={{ backgroundColor: `${char.color}30`, border: `3px solid ${char.color}` }}
+                className="p-1 border-[3px] rounded-sm"
+                style={{ borderColor: char.color, backgroundColor: `${char.color}18` }}
               >
-                {char.id === "abakule" ? "🤓" : "💼"}
+                <CharacterFace id={char.id} size={72} />
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold" style={{ color: char.color }}>
+              <div className="text-center w-full">
+                <div className="font-display text-[0.55rem]" style={{ color: char.color }}>
                   {char.name}
                 </div>
-                <div className="text-white/50 text-sm mt-1">{char.tagline}</div>
+                <div className="text-foreground/50 text-base mt-1 leading-snug">{char.tagline}</div>
               </div>
               {isVersus && p1Choice === char.id && (
-                <span className="text-xs px-2 py-1 rounded bg-white/10 text-white/70">
-                  P1 Selected
+                <span className="font-display text-[0.45rem] text-foreground/60 border border-foreground/25 px-2 py-1">
+                  P1
                 </span>
               )}
             </button>
@@ -84,8 +82,8 @@ export default function CharacterSelect({ mode, onSelect, onBack }: Props) {
         })}
       </div>
 
-      <button onClick={onBack} className="text-white/50 hover:text-white transition-colors">
-        ← Back
+      <button type="button" onClick={onBack} className="arcade-btn-ghost text-lg">
+        Back
       </button>
     </div>
   );

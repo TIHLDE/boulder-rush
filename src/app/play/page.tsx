@@ -133,7 +133,7 @@ export default function PlayPage() {
 
     case "playing":
       return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="relative z-[1] flex items-center justify-center min-h-screen py-6">
           <GameCanvas config={screen.config} onFinish={handleGameFinish} />
         </div>
       );

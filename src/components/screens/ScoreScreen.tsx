@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { GameResult, GameMode } from "@/game/types";
 import { CHARACTERS } from "@/game/data/characters";
 import { calculateTimeScore, calculateDatabrusBonus } from "@/lib/scoring";
+import { CharacterFace } from "@/components/arcade/CharacterFace";
+import { DatabrusIcon } from "@/components/arcade/ArcadeIcons";
 
 interface Props {
   results: GameResult[];
@@ -63,12 +65,12 @@ export default function ScoreScreen({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-      <h2 className="text-5xl font-black text-white">
-        {mode === "versus" ? "Match Results" : "Run Complete!"}
+    <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen gap-10 px-4 py-8">
+      <h2 className="arcade-title text-lg sm:text-2xl text-center text-neon">
+        {mode === "versus" ? "MATCH RESULTS" : "RUN COMPLETE"}
       </h2>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col lg:flex-row gap-8">
         {results.map((result, i) => {
           const char = CHARACTERS[result.character];
           const timeScore = calculateTimeScore(result.timeMs);
@@ -77,39 +79,37 @@ export default function ScoreScreen({
           return (
             <div
               key={i}
-              className="flex flex-col items-center gap-4 p-8 bg-white/5 rounded-2xl border-2 min-w-[280px]"
-              style={{ borderColor: `${char.color}50` }}
+              className="arcade-panel flex flex-col items-center gap-4 p-8 min-w-[280px]"
+              style={{ borderColor: `${char.color}aa`, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 0 #030308, 0 0 20px ${char.color}22` }}
             >
-              {/* Character info */}
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-                style={{ backgroundColor: `${char.color}30`, border: `2px solid ${char.color}` }}
-              >
-                {result.character === "abakule" ? "🤓" : "💼"}
+              <div className="p-1 border-[3px] rounded-sm" style={{ borderColor: char.color }}>
+                <CharacterFace id={result.character} size={56} />
               </div>
-              <span className="font-bold text-xl" style={{ color: char.color }}>
+              <span className="font-display text-[0.55rem]" style={{ color: char.color }}>
                 {result.playerName}
               </span>
 
-              {/* Score breakdown */}
               {showBreakdown && (
-                <div className="flex flex-col gap-2 w-full">
-                  <div className="flex justify-between text-white/60">
+                <div className="flex flex-col gap-2 w-full text-base">
+                  <div className="flex justify-between text-foreground/55">
                     <span>Time</span>
                     <span className="font-mono">{(result.timeMs / 1000).toFixed(2)}s</span>
                   </div>
-                  <div className="flex justify-between text-white/60">
-                    <span>Time Score</span>
+                  <div className="flex justify-between text-foreground/55">
+                    <span>Time score</span>
                     <span className="font-mono">{timeScore.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-green-400">
-                    <span>Databrus x{result.databrusCount}</span>
+                  <div className="flex justify-between text-green-databrus items-center gap-2">
+                    <span className="flex items-center gap-1">
+                      <DatabrusIcon size={18} />
+                      <span>x{result.databrusCount}</span>
+                    </span>
                     <span className="font-mono">+{databrusBonus.toLocaleString()}</span>
                   </div>
-                  <div className="border-t border-white/20 my-1" />
-                  <div className="flex justify-between text-2xl font-black text-white">
-                    <span>Total</span>
-                    <span className="font-mono">{animatedScores[i].toLocaleString()}</span>
+                  <div className="border-t border-neon/25 my-1" />
+                  <div className="flex justify-between font-display text-[0.65rem] text-foreground">
+                    <span>TOTAL</span>
+                    <span className="font-mono tracking-tight">{animatedScores[i].toLocaleString()}</span>
                   </div>
                 </div>
               )}
@@ -118,29 +118,24 @@ export default function ScoreScreen({
         })}
       </div>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex flex-wrap justify-center gap-3">
         <button
+          type="button"
           onClick={handleSubmit}
           disabled={submitted}
-          className={`px-6 py-3 rounded-xl font-bold transition-all ${
+          className={
             submitted
-              ? "bg-green-500/20 text-green-400"
-              : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:scale-105"
-          }`}
+              ? "arcade-btn-secondary border-green-databrus text-green-databrus cursor-default"
+              : "arcade-btn-secondary border-green-databrus text-green-databrus hover:text-white"
+          }
         >
-          {submitted ? "✓ Submitted!" : "Submit to Leaderboard"}
+          {submitted ? "SAVED" : "SUBMIT SCORE"}
         </button>
-        <button
-          onClick={onPlayAgain}
-          className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition-colors"
-        >
-          Play Again
+        <button type="button" onClick={onPlayAgain} className="arcade-btn-secondary uppercase">
+          Again
         </button>
-        <button
-          onClick={onMainMenu}
-          className="px-6 py-3 text-white/50 hover:text-white transition-colors"
-        >
-          Main Menu
+        <button type="button" onClick={onMainMenu} className="arcade-btn-ghost text-lg">
+          Main menu
         </button>
       </div>
     </div>
