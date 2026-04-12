@@ -8,6 +8,9 @@ const BG_COLOR = "#06060f";
 const GRID_COLOR = "rgba(0,245,212,0.055)";
 const OBSTACLE_COLOR = "#1a1a32";
 const OBSTACLE_BORDER = "rgba(0,245,212,0.28)";
+/** Visible bounds of the playable lane (x ∈ [0, LANE_WIDTH]) on canvas. */
+const PLAYFIELD_BORDER = "rgba(0,245,212,0.5)";
+const PLAYFIELD_BORDER_WIDTH = 3;
 const FINISH_COLOR_1 = "#ffffff";
 const FINISH_COLOR_2 = "#222222";
 
@@ -41,6 +44,7 @@ export class Renderer {
       const camera = cameras[i];
       const offsetX = laneOffsets[i];
       const laneW = laneWidths[i];
+      const lanePadding = (laneW - LANE_WIDTH) / 2;
 
       ctx.save();
       // Clip to lane area
@@ -49,7 +53,6 @@ export class Renderer {
       ctx.clip();
 
       // Translate for camera
-      const lanePadding = (laneW - LANE_WIDTH) / 2;
       ctx.translate(offsetX + lanePadding, -camera.y);
 
       // Draw grid
@@ -72,10 +75,18 @@ export class Renderer {
 
       ctx.restore();
 
-      // Draw lane border
-      if (players.length > 1) {
-        ctx.strokeStyle = "rgba(0,245,212,0.2)";
-        ctx.lineWidth = 2;
+      const playLeftX = offsetX + lanePadding;
+      const playRightX = playLeftX + LANE_WIDTH;
+      ctx.strokeStyle = PLAYFIELD_BORDER;
+      ctx.lineWidth = PLAYFIELD_BORDER_WIDTH;
+      ctx.beginPath();
+      ctx.moveTo(playLeftX, 0);
+      ctx.lineTo(playLeftX, this.canvasHeight);
+      ctx.moveTo(playRightX, 0);
+      ctx.lineTo(playRightX, this.canvasHeight);
+      ctx.stroke();
+
+      if (players.length > 1 && i === 0) {
         ctx.beginPath();
         ctx.moveTo(offsetX + laneW, 0);
         ctx.lineTo(offsetX + laneW, this.canvasHeight);
