@@ -1,5 +1,20 @@
 export type CharacterId = "abakule" | "tihldev";
 export type GameMode = "single" | "versus";
+export type DatabrusFlavor = "white" | "purple" | "green";
+
+/** HUD / bitmask order: white=1, purple=2, green=4 */
+export const DATABRUS_FLAVOR_ORDER: DatabrusFlavor[] = ["white", "purple", "green"];
+
+export function databrusFlavorBit(flavor: DatabrusFlavor): number {
+  switch (flavor) {
+    case "white":
+      return 1;
+    case "purple":
+      return 2;
+    case "green":
+      return 4;
+  }
+}
 
 export interface Player {
   id: number;
@@ -12,6 +27,8 @@ export interface Player {
   character: CharacterId;
   name: string;
   databrusCollected: number;
+  /** Bitmask of collected flavors; see databrusFlavorBit */
+  databrusMask: number;
   finishTime: number | null;
   inputUp: boolean;
   inputDown: boolean;
@@ -30,6 +47,7 @@ export interface Databrus {
   x: number;
   y: number;
   radius: number;
+  flavor: DatabrusFlavor;
   collected: boolean;
   glowPhase: number;
   collectTime: number | null;

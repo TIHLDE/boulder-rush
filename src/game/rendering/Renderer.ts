@@ -1,6 +1,7 @@
 import { Player, Obstacle, Databrus, Particle, LANE_WIDTH, FINISH_Y } from "../types";
 import { Camera } from "../engine/Camera";
 import { CHARACTERS } from "../data/characters";
+import { getDatabrusDrawStyle } from "../data/databrusPalette";
 
 /** Mirror arcade tokens in src/app/globals.css @theme (background, neon accents). */
 const BG_COLOR = "#06060f";
@@ -142,48 +143,66 @@ export class Renderer {
 
   private drawDatabrus(databrus: Databrus[], time: number, cameraY: number): void {
     const ctx = this.ctx;
+    const canW = 14;
+    const canH = 28;
+    const rimH = 3;
+
     for (const db of databrus) {
       if (db.collected) continue;
       if (db.y < cameraY - 50 || db.y > cameraY + this.canvasHeight + 50) continue;
 
+      const style = getDatabrusDrawStyle(db.flavor);
       const glow = 0.4 + Math.sin(time * 3 + db.glowPhase) * 0.3;
 
-      // Outer glow
-      const gradient = ctx.createRadialGradient(db.x, db.y, 0, db.x, db.y, db.radius * 2.5);
-      gradient.addColorStop(0, `rgba(46, 204, 113, ${glow * 0.4})`);
-      gradient.addColorStop(1, "rgba(46, 204, 113, 0)");
-      ctx.fillStyle = gradient;
+      const radial = ctx.createRadialGradient(db.x, db.y, 0, db.x, db.y, db.radius * 2.5);
+      radial.addColorStop(0, `rgba(${style.glowRgb}, ${glow * 0.45})`);
+      radial.addColorStop(1, `rgba(${style.glowRgb}, 0)`);
+      ctx.fillStyle = radial;
       ctx.beginPath();
       ctx.arc(db.x, db.y, db.radius * 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Can body
-      ctx.fillStyle = "#2ecc71";
+      const left = db.x - canW / 2;
+      const top = db.y - canH / 2;
+
+      const bodyGrad = ctx.createLinearGradient(left, top, left, top + canH);
+      bodyGrad.addColorStop(0, style.bodyTop);
+      bodyGrad.addColorStop(1, style.bodyBottom);
+      ctx.fillStyle = bodyGrad;
       ctx.beginPath();
-      ctx.roundRect(db.x - 8, db.y - 12, 16, 24, 3);
+      ctx.roundRect(left, top, canW, canH, 3);
       ctx.fill();
 
-      // Can highlight
-      ctx.fillStyle = "rgba(255,255,255,0.3)";
-      ctx.fillRect(db.x - 5, db.y - 10, 3, 18);
+      ctx.fillStyle = style.rim;
+      ctx.fillRect(left, top, canW, rimH);
+      ctx.fillRect(left, top + canH - rimH, canW, rimH);
 
-      // "D" label
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 10px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("D", db.x, db.y);
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      ctx.fillRect(left + 2, top + rimH + 1, 2.5, canH - rimH * 2 - 2);
 
-      // Sparkle dots
-      for (let i = 0; i < 3; i++) {
-        const angle = time * 2 + db.glowPhase + (i * Math.PI * 2) / 3;
-        const dist = db.radius * 1.5 + Math.sin(time * 4 + i) * 3;
+      ctx.strokeStyle = style.claw;
+      ctx.lineWidth = 2.25;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      const mx = db.x;
+      const my = db.y;
+      ctx.moveTo(mx - 4, my - 6);
+      ctx.lineTo(mx - 1, my + 2);
+      ctx.moveTo(mx - 1, my - 7);
+      ctx.lineTo(mx + 2, my + 3);
+      ctx.moveTo(mx + 2, my - 6);
+      ctx.lineTo(mx + 5, my + 2);
+      ctx.stroke();
+
+      for (let i = 0; i < 2; i++) {
+        const angle = time * 2 + db.glowPhase + i * Math.PI;
+        const dist = db.radius * 1.35 + Math.sin(time * 4 + i) * 2;
         const sx = db.x + Math.cos(angle) * dist;
         const sy = db.y + Math.sin(angle) * dist;
-        const sparkleAlpha = 0.5 + Math.sin(time * 5 + i * 2) * 0.5;
-        ctx.fillStyle = `rgba(241, 196, 15, ${sparkleAlpha})`;
+        const sparkleAlpha = 0.2 + Math.sin(time * 5 + i * 2) * 0.15;
+        ctx.fillStyle = `rgba(${style.glowRgb}, ${sparkleAlpha})`;
         ctx.beginPath();
-        ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+        ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
         ctx.fill();
       }
     }

@@ -1,8 +1,16 @@
 "use client";
 
+import type { DatabrusFlavor } from "@/game/types";
+import { getDatabrusDrawStyle } from "@/game/data/databrusPalette";
+
 interface IconProps {
   size?: number;
   className?: string;
+}
+
+interface DatabrusIconProps extends IconProps {
+  variant?: DatabrusFlavor;
+  dimmed?: boolean;
 }
 
 const pixel = {
@@ -10,8 +18,14 @@ const pixel = {
   "aria-hidden": true as const,
 };
 
-/** Green databrus can — matches canvas pickup. */
-export function DatabrusIcon({ size = 20, className }: IconProps) {
+/** Monster-inspired databrus can — matches canvas pickups; default green for aggregate UI. */
+export function DatabrusIcon({
+  size = 20,
+  className,
+  variant = "green",
+  dimmed = false,
+}: DatabrusIconProps) {
+  const s = getDatabrusDrawStyle(variant);
   return (
     <svg
       {...pixel}
@@ -19,12 +33,17 @@ export function DatabrusIcon({ size = 20, className }: IconProps) {
       height={size}
       viewBox="0 0 12 16"
       className={className}
+      style={{ opacity: dimmed ? 0.3 : 1 }}
     >
-      <rect x="0" y="0" width="12" height="16" fill="#1a3320" />
-      <rect x="2" y="3" width="8" height="11" fill="#2ecc71" />
-      <rect x="3" y="2" width="6" height="2" fill="#27ae60" />
-      <rect x="3" y="4" width="2" height="8" fill="#5dffc0" opacity="0.35" />
-      <rect x="5" y="7" width="2" height="3" fill="#fff" />
+      <rect x="0" y="0" width="12" height="16" fill={s.rim} />
+      <rect x="1" y="2" width="10" height="2" fill={s.rim} />
+      <rect x="1" y="3" width="10" height="5" fill={s.bodyTop} />
+      <rect x="1" y="8" width="10" height="5" fill={s.bodyBottom} />
+      <rect x="1" y="13" width="10" height="2" fill={s.rim} />
+      <rect x="2" y="4" width="2" height="8" fill="#ffffff" opacity="0.18" />
+      <line x1="3.5" y1="5" x2="5" y2="11" stroke={s.claw} strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="5" y1="4.5" x2="6.5" y2="11.5" stroke={s.claw} strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="6.5" y1="5" x2="8.2" y2="11" stroke={s.claw} strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }

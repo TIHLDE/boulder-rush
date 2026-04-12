@@ -1,6 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { GameConfig, GameResult, CANVAS_WIDTH, CANVAS_HEIGHT, VERSUS_CANVAS_WIDTH } from "@/game/types";
+import {
+  GameConfig,
+  GameResult,
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  VERSUS_CANVAS_WIDTH,
+  DATABRUS_FLAVOR_ORDER,
+  databrusFlavorBit,
+} from "@/game/types";
 import { GameEngine } from "@/game/engine/GameEngine";
 import { DatabrusIcon } from "@/components/arcade/ArcadeIcons";
 
@@ -13,7 +21,9 @@ export default function GameCanvas({ config, onFinish }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   const [elapsed, setElapsed] = useState(0);
-  const [databrus, setDatabrus] = useState<number[]>([0]);
+  const [databrusMasks, setDatabrusMasks] = useState<number[]>(() =>
+    config.players.map(() => 0)
+  );
   const [countdown, setCountdown] = useState<number | null>(3);
 
   useEffect(() => {
@@ -22,10 +32,11 @@ export default function GameCanvas({ config, onFinish }: Props) {
 
     const engine = new GameEngine(canvas, config);
     engineRef.current = engine;
+    setDatabrusMasks(config.players.map(() => 0));
 
-    engine.onHudUpdate = (ms, db) => {
+    engine.onHudUpdate = (ms, masks) => {
       setElapsed(ms);
-      setDatabrus(db);
+      setDatabrusMasks(masks);
     };
 
     engine.onCountdownTick = (val) => {
@@ -70,8 +81,13 @@ export default function GameCanvas({ config, onFinish }: Props) {
               {(elapsed / 1000).toFixed(1)}s
             </span>
             <span className="flex flex-wrap items-center gap-0.5">
-              {Array.from({ length: databrus[i] || 0 }, (_, j) => (
-                <DatabrusIcon key={j} size={16} />
+              {DATABRUS_FLAVOR_ORDER.map((flavor) => (
+                <DatabrusIcon
+                  key={flavor}
+                  variant={flavor}
+                  dimmed={((databrusMasks[i] ?? 0) & databrusFlavorBit(flavor)) === 0}
+                  size={16}
+                />
               ))}
             </span>
           </div>

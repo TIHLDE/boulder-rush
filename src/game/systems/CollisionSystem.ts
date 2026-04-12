@@ -6,7 +6,9 @@ import {
   PLAYER_SIZE,
   BOUNCE_FACTOR,
   FINISH_Y,
+  databrusFlavorBit,
 } from "../types";
+import { getDatabrusDrawStyle } from "../data/databrusPalette";
 
 export class CollisionSystem {
   private onDatabrusCollected?: (playerIndex: number) => void;
@@ -97,8 +99,9 @@ export class CollisionSystem {
           db.collected = true;
           db.collectTime = performance.now();
           player.databrusCollected++;
+          player.databrusMask |= databrusFlavorBit(db.flavor);
           this.onDatabrusCollected?.(player.id);
-          this.spawnParticles?.(db.x, db.y, "#2ecc71");
+          this.spawnParticles?.(db.x, db.y, getDatabrusDrawStyle(db.flavor).particle);
         }
       }
 
