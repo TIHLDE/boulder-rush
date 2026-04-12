@@ -22,6 +22,7 @@ export default function MatchResult({
   onMainMenu,
 }: Props) {
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const winnerIdx = wins[0] >= 2 ? 0 : 1;
   const winnerChar = CHARACTERS[config.players[winnerIdx].character];
 
@@ -36,22 +37,30 @@ export default function MatchResult({
 
   const handleSubmit = async () => {
     if (submitted) return;
+    setSubmitError(null);
     setSubmitted(true);
-    for (const result of bestResults) {
-      await fetch("/api/scores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerName: result.playerName,
-          character: result.character,
-          mode: "versus",
-          score: result.score,
-          timeMs: result.timeMs,
-          databrusCount: result.databrusCount,
-        }),
-      });
+    try {
+      for (const result of bestResults) {
+        const res = await fetch(`/api/scores/${result.scoreId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            timeMs: result.timeMs,
+            databrusCount: result.databrusCount,
+          }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        if (!res.ok) {
+          setSubmitError(typeof data.error === "string" ? data.error : "Could not save scores.");
+          setSubmitted(false);
+          return;
+        }
+      }
+      onSubmitScores();
+    } catch {
+      setSubmitError("Could not save scores.");
+      setSubmitted(false);
     }
-    onSubmitScores();
   };
 
   return (
@@ -95,10 +104,16 @@ export default function MatchResult({
         ))}
       </div>
 
+      {submitError && (
+        <p className="text-red-400 text-base text-center px-4" role="alert">
+          {submitError}
+        </p>
+      )}
+
       <div className="flex flex-wrap justify-center gap-3 mt-2">
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => void handleSubmit()}
           disabled={submitted}
           className={
             submitted

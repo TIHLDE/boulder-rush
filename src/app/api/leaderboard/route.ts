@@ -7,8 +7,12 @@ export async function GET(request: NextRequest) {
     const mode = searchParams.get("mode") || "all";
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
 
+    const completed = { completedAt: { not: null } } as const;
+
     const where =
-      mode === "all" ? {} : { mode: mode as "single" | "versus" };
+      mode === "all"
+        ? completed
+        : { ...completed, mode: mode as "single" | "versus" };
 
     const scores = await prisma.score.findMany({
       where,

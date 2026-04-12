@@ -42,6 +42,7 @@ export function useGameState(initialScreen: Screen = { type: "main_menu" }) {
       const players: PlayerSetup[] = characters.map((c) => ({
         name: "",
         character: c,
+        scoreId: "",
       }));
       setScreen({ type: "name_entry", mode, players });
     },

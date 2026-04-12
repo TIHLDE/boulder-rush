@@ -24,6 +24,7 @@ export default function ScoreScreen({
   const [animatedScores, setAnimatedScores] = useState<number[]>(results.map(() => 0));
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowBreakdown(true), 300);
@@ -46,22 +47,30 @@ export default function ScoreScreen({
 
   const handleSubmit = async () => {
     if (submitted) return;
+    setSubmitError(null);
     setSubmitted(true);
-    for (const result of results) {
-      await fetch("/api/scores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerName: result.playerName,
-          character: result.character,
-          mode,
-          score: result.score,
-          timeMs: result.timeMs,
-          databrusCount: result.databrusCount,
-        }),
-      });
+    try {
+      for (const result of results) {
+        const res = await fetch(`/api/scores/${result.scoreId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            timeMs: result.timeMs,
+            databrusCount: result.databrusCount,
+          }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        if (!res.ok) {
+          setSubmitError(typeof data.error === "string" ? data.error : "Could not save score.");
+          setSubmitted(false);
+          return;
+        }
+      }
+      onSubmitScores();
+    } catch {
+      setSubmitError("Could not save score.");
+      setSubmitted(false);
     }
-    onSubmitScores();
   };
 
   return (
@@ -118,10 +127,16 @@ export default function ScoreScreen({
         })}
       </div>
 
+      {submitError && (
+        <p className="text-red-400 text-base text-center px-4" role="alert">
+          {submitError}
+        </p>
+      )}
+
       <div className="flex flex-wrap justify-center gap-3">
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => void handleSubmit()}
           disabled={submitted}
           className={
             submitted

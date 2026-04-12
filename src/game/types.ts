@@ -26,6 +26,7 @@ export interface Player {
   vy: number;
   character: CharacterId;
   name: string;
+  scoreId: string;
   databrusCollected: number;
   /** Bitmask of collected flavors; see databrusFlavorBit */
   databrusMask: number;
@@ -72,9 +73,12 @@ export interface GameConfig {
 export interface PlayerSetup {
   name: string;
   character: CharacterId;
+  /** CUID from POST /api/scores/reserve; empty until names are reserved */
+  scoreId: string;
 }
 
 export interface GameResult {
+  scoreId: string;
   playerName: string;
   character: CharacterId;
   timeMs: number;

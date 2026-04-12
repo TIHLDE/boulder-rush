@@ -13,21 +13,58 @@ interface Props {
 
 export default function NameEntry({ mode, players, onStart, onBack }: Props) {
   const [names, setNames] = useState<string[]>(players.map(() => ""));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const canStart = names.every((n) => n.trim().length > 0);
 
-  const handleStart = () => {
-    if (!canStart) return;
-    const updated = players.map((p, i) => ({
-      ...p,
-      name: names[i].trim().slice(0, 20),
-    }));
-    onStart(updated);
+  const handleStart = async () => {
+    if (!canStart || loading) return;
+
+    if (mode === "versus" && names.length === 2) {
+      const a = names[0].trim().toLowerCase();
+      const b = names[1].trim().toLowerCase();
+      if (a === b) {
+        setError("Players must use different names.");
+        return;
+      }
+    }
+
+    setError(null);
+    setLoading(true);
+    try {
+      const playersPayload = players.map((p, i) => ({
+        playerName: names[i].trim().slice(0, 20),
+        character: p.character,
+      }));
+      const res = await fetch("/api/scores/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode, players: playersPayload }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string; entries?: { id: string; playerName: string }[] };
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : "Could not reserve names.");
+        return;
+      }
+      if (!data.entries || data.entries.length !== players.length) {
+        setError("Invalid response from server.");
+        return;
+      }
+      const updated: PlayerSetup[] = players.map((p, i) => ({
+        ...p,
+        name: data.entries![i].playerName,
+        scoreId: data.entries![i].id,
+      }));
+      onStart(updated);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && canStart) {
-      handleStart();
+    if (e.key === "Enter" && canStart && !loading) {
+      void handleStart();
     }
   };
 
@@ -63,6 +100,7 @@ export default function NameEntry({ mode, players, onStart, onBack }: Props) {
                 onKeyDown={handleKeyDown}
                 placeholder="Name..."
                 autoFocus={i === 0}
+                disabled={loading}
                 className="arcade-input w-full"
               />
             </div>
@@ -70,17 +108,23 @@ export default function NameEntry({ mode, players, onStart, onBack }: Props) {
         })}
       </div>
 
+      {error && (
+        <p className="text-red-400 text-base text-center max-w-md" role="alert">
+          {error}
+        </p>
+      )}
+
       <div className="flex flex-wrap items-center justify-center gap-4">
-        <button type="button" onClick={onBack} className="arcade-btn-ghost text-lg">
+        <button type="button" onClick={onBack} disabled={loading} className="arcade-btn-ghost text-lg">
           Back
         </button>
         <button
           type="button"
-          onClick={handleStart}
-          disabled={!canStart}
+          onClick={() => void handleStart()}
+          disabled={!canStart || loading}
           className="arcade-btn-primary uppercase"
         >
-          Start
+          {loading ? "…" : "Start"}
         </button>
       </div>
 

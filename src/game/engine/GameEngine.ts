@@ -84,6 +84,7 @@ export class GameEngine {
         vy: 0,
         character: config.players[i].character,
         name: config.players[i].name,
+        scoreId: config.players[i].scoreId,
         databrusCollected: 0,
         databrusMask: 0,
         finishTime: null,
@@ -264,6 +265,7 @@ export class GameEngine {
 
   private emitResults(): void {
     const results: GameResult[] = this.players.map((p) => ({
+      scoreId: p.scoreId,
       playerName: p.name,
       character: p.character,
       timeMs: Math.round(p.finishTime || this.elapsedMs),

@@ -8,14 +8,16 @@ datasource db {
 }
 
 model Score {
-  id            String   @id @default(cuid())
-  playerName    String   @db.VarChar(20)
+  id            String    @id @default(cuid())
+  playerName    String    @db.VarChar(20)
+  playerNameKey String    @unique @db.VarChar(20)
   character     String
   mode          String
-  score         Int
+  score         Int       @default(0)
   timeMs        Int
   databrusCount Int
-  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
 
   @@index([mode, score(sort: Desc)])
 }
