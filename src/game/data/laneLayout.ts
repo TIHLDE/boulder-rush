@@ -27,14 +27,25 @@ export function createObstacles(): Obstacle[] {
     { x: 260, y: 2500, width: 140, height: 30 },
 
     // Section 5: Final sprint (y=2400→600)
+    // Slalom into pillars
+    { x: 0, y: 2380, width: 220, height: 30 },
+    { x: 225, y: 2240, width: 175, height: 30 },
+    { x: 0, y: 2100, width: 200, height: 30 },
+    { x: 215, y: 1960, width: 185, height: 30 },
+    { x: 0, y: 1750, width: 165, height: 30 },
     // Two pillars
     { x: 100, y: 1800, width: 40, height: 80 },
     { x: 260, y: 1800, width: 40, height: 80 },
+    { x: 0, y: 1600, width: 155, height: 30 },
+    { x: 250, y: 1400, width: 150, height: 30 },
     // Narrow gate
     { x: 0, y: 1200, width: 150, height: 30 },
     { x: 250, y: 1200, width: 150, height: 30 },
     // Last dodge
     { x: 0, y: 800, width: 180, height: 30 },
+    // Needle eye: 38px gap (36px player + 2px slack), center ~25% from left (~75% of lane to the right)
+    { x: 0, y: 250, width: 81, height: 30 },
+    { x: 119, y: 250, width: 281, height: 30 },
   ];
 }
 
