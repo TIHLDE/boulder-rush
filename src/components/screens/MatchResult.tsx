@@ -82,19 +82,23 @@ export default function MatchResult({
 
       <TrophyIcon size={72} />
 
-      <div className="flex items-center gap-8 font-display text-lg sm:text-xl">
-        <div className="text-center">
+      <div className="flex items-end gap-6 sm:gap-10 font-display text-lg sm:text-xl">
+        <div className="text-center min-w-0 flex-1">
           <div style={{ color: CHARACTERS[config.players[0].character].color }}>
             {config.players[0].name}
           </div>
-          <div className="text-foreground mt-1">{totals[0].toLocaleString()}</div>
+          <div className="text-foreground mt-2 font-mono text-3xl sm:text-4xl tracking-tight tabular-nums">
+            {totals[0].toLocaleString()}
+          </div>
         </div>
-        <span className="text-foreground/35 text-sm">VS</span>
-        <div className="text-center">
+        <span className="text-foreground/35 text-sm pb-1 shrink-0">VS</span>
+        <div className="text-center min-w-0 flex-1">
           <div style={{ color: CHARACTERS[config.players[1].character].color }}>
             {config.players[1].name}
           </div>
-          <div className="text-foreground mt-1">{totals[1].toLocaleString()}</div>
+          <div className="text-foreground mt-2 font-mono text-3xl sm:text-4xl tracking-tight tabular-nums">
+            {totals[1].toLocaleString()}
+          </div>
         </div>
       </div>
 

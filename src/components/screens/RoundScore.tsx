@@ -47,7 +47,9 @@ export default function RoundScore({ config, allRoundResults, round, totals, onN
                 <span className="text-foreground/55 font-mono text-lg">
                   {(result.timeMs / 1000).toFixed(2)}s
                 </span>
-                <span className="font-display text-[0.6rem] text-foreground">{result.score.toLocaleString()}</span>
+                <span className="font-mono text-xl sm:text-2xl text-foreground tracking-tight tabular-nums">
+                  {result.score.toLocaleString()}
+                </span>
                 {isWinner && (
                   <div className="flex flex-col items-center gap-2 mt-2">
                     <TrophyIcon size={40} />

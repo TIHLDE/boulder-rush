@@ -116,9 +116,11 @@ export default function ScoreScreen({
                     <span className="font-mono">+{databrusBonus.toLocaleString()}</span>
                   </div>
                   <div className="border-t border-neon/25 my-1" />
-                  <div className="flex justify-between font-display text-[0.65rem] text-foreground">
-                    <span>TOTAL</span>
-                    <span className="font-mono tracking-tight">{animatedScores[i].toLocaleString()}</span>
+                  <div className="flex justify-between items-end gap-4 font-display text-foreground">
+                    <span className="text-sm sm:text-base text-foreground/70 shrink-0">TOTAL</span>
+                    <span className="font-mono tracking-tight text-2xl sm:text-4xl text-neon tabular-nums">
+                      {animatedScores[i].toLocaleString()}
+                    </span>
                   </div>
                 </div>
               )}
