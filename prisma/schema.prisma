@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Score {
+  id            String   @id @default(cuid())
+  playerName    String   @db.VarChar(20)
+  character     String
+  mode          String
+  score         Int
+  timeMs        Int
+  databrusCount Int
+  createdAt     DateTime @default(now())
+
+  @@index([mode, score(sort: Desc)])
+}
