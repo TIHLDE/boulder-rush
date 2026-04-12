@@ -33,7 +33,7 @@ export default function ModeSelect({ onSelect, onBack }: Props) {
           <IconVersusMode size={56} />
           <span className="font-display text-[0.6rem] text-blue-game-light">1v1 LOCAL</span>
           <span className="text-foreground/55 text-center text-base leading-snug">
-            Best of 3 rounds
+            One race — highest score wins
           </span>
         </button>
       </div>

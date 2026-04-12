@@ -7,7 +7,7 @@ import { TrophyIcon } from "@/components/arcade/ArcadeIcons";
 interface Props {
   config: GameConfig;
   allRoundResults: RoundResult[];
-  wins: number[];
+  totals: number[];
   onSubmitScores: () => void;
   onPlayAgain: () => void;
   onMainMenu: () => void;
@@ -16,14 +16,25 @@ interface Props {
 export default function MatchResult({
   config,
   allRoundResults,
-  wins,
+  totals,
   onSubmitScores,
   onPlayAgain,
   onMainMenu,
 }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const winnerIdx = wins[0] >= 2 ? 0 : 1;
+
+  const timeTotals = config.players.map((_, pIdx) =>
+    allRoundResults.reduce((sum, r) => sum + r.results[pIdx].timeMs, 0)
+  );
+  const winnerIdx =
+    totals[0] > totals[1]
+      ? 0
+      : totals[1] > totals[0]
+        ? 1
+        : timeTotals[0] < timeTotals[1]
+          ? 0
+          : 1;
   const winnerChar = CHARACTERS[config.players[winnerIdx].character];
 
   const bestResults: GameResult[] = config.players.map((_, pIdx) => {
@@ -76,14 +87,14 @@ export default function MatchResult({
           <div style={{ color: CHARACTERS[config.players[0].character].color }}>
             {config.players[0].name}
           </div>
-          <div className="text-foreground mt-1">{wins[0]}</div>
+          <div className="text-foreground mt-1">{totals[0].toLocaleString()}</div>
         </div>
         <span className="text-foreground/35 text-sm">VS</span>
         <div className="text-center">
           <div style={{ color: CHARACTERS[config.players[1].character].color }}>
             {config.players[1].name}
           </div>
-          <div className="text-foreground mt-1">{wins[1]}</div>
+          <div className="text-foreground mt-1">{totals[1].toLocaleString()}</div>
         </div>
       </div>
 

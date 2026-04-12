@@ -21,9 +21,9 @@ export type Screen =
       config: GameConfig;
       allRoundResults: RoundResult[];
       round: number;
-      wins: number[];
+      totals: number[];
     }
-  | { type: "match_result"; config: GameConfig; allRoundResults: RoundResult[]; wins: number[] }
+  | { type: "match_result"; config: GameConfig; allRoundResults: RoundResult[]; totals: number[] }
   | { type: "leaderboard" };
 
 export function useGameState(initialScreen: Screen = { type: "main_menu" }) {
@@ -65,26 +65,22 @@ export function useGameState(initialScreen: Screen = { type: "main_menu" }) {
       config: GameConfig,
       roundResults: GameResult[],
       prevRounds: RoundResult[],
-      prevWins: number[]
+      prevTotals: number[]
     ) => {
       const round = prevRounds.length + 1;
       const allRounds = [...prevRounds, { round, results: roundResults }];
 
-      // Determine round winner (lowest time wins the round)
-      const wins = [...prevWins];
+      const totals = [...prevTotals];
       if (roundResults.length === 2) {
-        if (roundResults[0].timeMs < roundResults[1].timeMs) {
-          wins[0]++;
-        } else {
-          wins[1]++;
-        }
+        totals[0] += roundResults[0].score;
+        totals[1] += roundResults[1].score;
       }
 
-      // Check if match is over (best of 3)
-      if (wins[0] >= 2 || wins[1] >= 2 || allRounds.length >= 3) {
-        setScreen({ type: "match_result", config, allRoundResults: allRounds, wins });
+      const VERSUS_ROUNDS = 1;
+      if (allRounds.length >= VERSUS_ROUNDS) {
+        setScreen({ type: "match_result", config, allRoundResults: allRounds, totals });
       } else {
-        setScreen({ type: "round_score", config, allRoundResults: allRounds, round, wins });
+        setScreen({ type: "round_score", config, allRoundResults: allRounds, round, totals });
       }
     },
     []

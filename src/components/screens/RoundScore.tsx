@@ -7,11 +7,11 @@ interface Props {
   config: GameConfig;
   allRoundResults: RoundResult[];
   round: number;
-  wins: number[];
+  totals: number[];
   onNextRound: () => void;
 }
 
-export default function RoundScore({ config, allRoundResults, round, wins, onNextRound }: Props) {
+export default function RoundScore({ config, allRoundResults, round, totals, onNextRound }: Props) {
   const lastRound = allRoundResults[allRoundResults.length - 1];
 
   return (
@@ -23,9 +23,13 @@ export default function RoundScore({ config, allRoundResults, round, wins, onNex
       <div className="flex flex-col sm:flex-row gap-8">
         {lastRound.results.map((result, i) => {
           const char = CHARACTERS[result.character];
+          const other = lastRound.results[1 - i];
           const isWinner =
             lastRound.results.length === 2 &&
-            result.timeMs === Math.min(lastRound.results[0].timeMs, lastRound.results[1].timeMs);
+            (result.score > other.score ||
+              (result.score === other.score &&
+                (result.timeMs < other.timeMs ||
+                  (result.timeMs === other.timeMs && i === 0))));
 
           return (
             <div
@@ -57,9 +61,9 @@ export default function RoundScore({ config, allRoundResults, round, wins, onNex
       </div>
 
       <div className="flex items-center gap-6 font-display text-xl sm:text-2xl">
-        <span style={{ color: CHARACTERS[config.players[0].character].color }}>{wins[0]}</span>
+        <span style={{ color: CHARACTERS[config.players[0].character].color }}>{totals[0].toLocaleString()}</span>
         <span className="text-foreground/35">—</span>
-        <span style={{ color: CHARACTERS[config.players[1].character].color }}>{wins[1]}</span>
+        <span style={{ color: CHARACTERS[config.players[1].character].color }}>{totals[1].toLocaleString()}</span>
       </div>
 
       <button type="button" onClick={onNextRound} className="arcade-btn-primary uppercase">

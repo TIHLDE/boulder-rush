@@ -30,11 +30,11 @@ export default function PlayPage() {
   const versusStateRef = useRef<{
     config: null | { mode: GameMode; players: PlayerSetup[] };
     allRoundResults: RoundResult[];
-    wins: number[];
+    totals: number[];
   }>({
     config: null,
     allRoundResults: [],
-    wins: [0, 0],
+    totals: [0, 0],
   });
 
   const handleModeSelect = useCallback(
@@ -62,7 +62,7 @@ export default function PlayPage() {
         versusStateRef.current = {
           config: { mode: "versus", players },
           allRoundResults: [],
-          wins: [0, 0],
+          totals: [0, 0],
         };
       }
       startGame(screen.mode, players);
@@ -81,7 +81,7 @@ export default function PlayPage() {
           screen.config,
           results,
           vs.allRoundResults,
-          vs.wins
+          vs.totals
         );
       }
     },
@@ -92,7 +92,7 @@ export default function PlayPage() {
     if (screen.type !== "round_score") return;
     // Update ref state
     versusStateRef.current.allRoundResults = screen.allRoundResults;
-    versusStateRef.current.wins = screen.wins;
+    versusStateRef.current.totals = screen.totals;
     // Start next round with same config
     setScreen({ type: "playing", config: screen.config });
   }, [screen, setScreen]);
@@ -155,7 +155,7 @@ export default function PlayPage() {
           config={screen.config}
           allRoundResults={screen.allRoundResults}
           round={screen.round}
-          wins={screen.wins}
+          totals={screen.totals}
           onNextRound={handleNextRound}
         />
       );
@@ -165,7 +165,7 @@ export default function PlayPage() {
         <MatchResult
           config={screen.config}
           allRoundResults={screen.allRoundResults}
-          wins={screen.wins}
+          totals={screen.totals}
           onSubmitScores={handleScoreSubmitted}
           onPlayAgain={handlePlayAgain}
           onMainMenu={goToMainMenu}
